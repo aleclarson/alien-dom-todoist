@@ -1,0 +1,31 @@
+body {
+  background-color: #1e1e1e;
+  font-family: -apple-system, system-ui, 'Segoe UI', Roboto, Noto, Oxygen-Sans,
+    Ubuntu, Cantrell, 'Helvetica Neue', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 1px;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg {
+  position: relative;
+  width: 100%;
+}
+
+div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Disable default input style. */
+input {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+button:focus {
+  outline: none;
+}
