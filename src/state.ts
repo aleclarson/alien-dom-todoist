@@ -1,6 +1,6 @@
+import { isArray } from '@alloc/is'
 import { ArrayRef, arrayRef, observe, refs } from 'alien-dom'
 import { uid } from 'uid'
-import { isArray } from '@alloc/is'
 
 export enum TodoStatus {
   Inactive,
@@ -61,14 +61,17 @@ export function removeTodo(todo: Todo) {
 }
 
 export function saveTodoList(todoList: readonly Todo[] | ArrayRef<Todo>) {
+  // If it's an array ref, get the value.
   if (!isArray(todoList)) {
-    todoList = todoList.value as Todo[]
+    todoList = todoList.value
   }
   localStorage.setItem('todoList', JSON.stringify(todoList))
 }
 
 // Load the saved todo list.
-const savedTodoList = JSON.parse(localStorage.getItem('todoList') || '[]')
+const savedTodoList: any[] = JSON.parse(
+  localStorage.getItem('todoList') || '[]'
+)
 savedTodoList.forEach(createTodo)
 
 // Watch for changes to the todo list.

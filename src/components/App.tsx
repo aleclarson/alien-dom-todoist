@@ -1,19 +1,18 @@
+import { ActionButton } from '@/ActionButton'
+import { Icon } from '@/Icon'
+import { Todo, TodoStatus, createTodo, todoList } from '@/state'
+import { useEventState } from '@/useEventState'
 import {
-  useEffect,
-  useRef,
   AlienEvent,
   EffectContext,
   HTML,
   JSX,
   animate,
   useComputed,
-  patchStyle,
+  useEffect,
+  useRef,
   useRefs,
 } from 'alien-dom'
-import { Todo, TodoStatus, createTodo, todoList } from '@/state'
-import { Icon } from '@/Icon'
-import { ActionButton } from '@/ActionButton'
-import { useEventState } from '@/useEventState'
 import { uid } from 'uid'
 
 export function App() {
@@ -73,15 +72,15 @@ function TodoItem({ todo }: { todo: Todo }) {
               event.currentTarget.closest<HTMLElement>('.todo-item')!
 
             const clientHeight = todoItem.clientHeight
-            patchStyle(todoItem, {
-              willChange: 'height',
-            })
+            todoItem.style.willChange = 'height'
 
             animate(todoItem, {
               to: { opacity: 0 },
               from: { opacity: 1 },
               spring: { frequency: 0.4 },
-              onChange({ opacity }) {},
+              onChange({ opacity }) {
+                todoItem.style.height = clientHeight * opacity + 'px'
+              },
             })
           }
         }}
@@ -206,8 +205,10 @@ function TodoCreator() {
           class="fixed top-0 left-0 w-100vw h-100vh bg-black/50 items-center"
           onKeyDownCapture={(event) => {
             if (event.key === 'Enter') {
+              event.stopPropagation()
               confirm(event)
             } else if (event.key === 'Escape') {
+              event.stopPropagation()
               cancel(event)
             }
           }}
@@ -256,9 +257,13 @@ function TodoCreator() {
           }}
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
+              event.stopPropagation()
               cancel()
-            } else if (event.key === 'Enter' && !todoTextEmpty.value) {
-              submit()
+            } else if (event.key === 'Enter') {
+              event.stopPropagation()
+              if (!todoTextEmpty.value) {
+                submit()
+              }
             }
           }}
         />

@@ -1,5 +1,8 @@
 import { JSX } from 'alien-dom'
 
+/**
+ * Attach event listeners to an element, then return a function that removes them.
+ */
 export function attachListeners(
   target: JSX.Element,
   listeners: {

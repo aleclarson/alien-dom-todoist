@@ -7,6 +7,10 @@ const states = {
   focus: { focusin: true, focusout: false },
 }
 
+/**
+ * Observe the hover, click, or focus state of the component's root element or a given `target`
+ * element.
+ */
 export function useEventState(
   state: keyof typeof states,
   target?: JSX.Element

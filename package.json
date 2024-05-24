@@ -7,10 +7,13 @@
     "dev": "vite dev",
     "build": "vite build"
   },
+  "prettier": "@alloc/prettier-config",
   "devDependencies": {
     "@alien-dom/vite": "^0.9.0",
+    "@alloc/prettier-config": "^1.0.0",
     "@unocss/core": "^0.60.0",
     "@unocss/vite": "^0.60.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.2.2",
     "unocss-preset-alloc": "^0.22.11",
     "vite": "^5.2.11",

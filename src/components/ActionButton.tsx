@@ -5,7 +5,7 @@ const ActionButtonTheme = {
   gray: 'color-#e4e4e4 bg-#292929 hover:bg-#3d3d3d',
 }
 
-type ForwardedProps = Omit<JSX.IntrinsicElements['div'], 'color'>
+type ForwardedProps = Omit<JSX.HTMLProps<'div'>, 'color'>
 
 /**
  * This component provides common styles for action buttons.
