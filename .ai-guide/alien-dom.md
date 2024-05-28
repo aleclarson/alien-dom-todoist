@@ -1,6 +1,8 @@
-This is a guide for generative AI (like GPT4) to follow when generating code that uses AlienDOM as a replacement for React. For more details, see the AlienDOM type definitions in the "alien-dom.d.ts" file.
+# Intro to AlienDOM
 
-# Similarities with React
+This is a guide for generative AI (like GPT4) to follow when generating code that uses AlienDOM as an alternative to React. For more details, see the AlienDOM type definitions in the "alien-dom.d.ts" file.
+
+## Similarities with React
 
 Here are the similarities with React:
 
@@ -12,7 +14,7 @@ Here are the similarities with React:
 - any JSX element may have a `key` prop declared
 - any intrinsic JSX element may have a `ref` prop declared
 
-# Differences from React
+## Differences from React
 
 Here are the differences with React (with “it” referring to AlienDOM):
 
@@ -26,7 +28,7 @@ Here are the differences with React (with “it” referring to AlienDOM):
 - Its `class` and `style` props for intrinsic JSX elements are more powerful (more on that later).
 - For intrinsic JSX elements, any prop can be a “ref” (AlienDOM's observable value) which will be observed by the DOM node while it's connected to the document, and whenever the ref's value is changed, the DOM node will be updated accordingly.
 
-# The AlienDOM way
+## The AlienDOM way
 
 Idiomatic code in AlienDOM tends to do the following:
 
@@ -36,7 +38,7 @@ Idiomatic code in AlienDOM tends to do the following:
 
 Finally, I'll include some sections from AlienDOM's documentation that you may find useful.
 
-# Hooks
+## Hooks
 
 These hooks are included in the `alien-dom` package. I've listed them in order of importance (the most commonly used hooks are at the top).
 
@@ -55,9 +57,9 @@ These hooks are included in the `alien-dom` package. I've listed them in order o
 
 There are many more hooks included, but they are used much less frequently and are typically for more advanced use cases as a result.
 
-# Observability
+## Observability
 
-## Observables
+### Observables
 
 An **observable value** (or just "observable" for short) is a loose concept that refers to a special kind of value that will notify other parts of your application when it changes. In technical terms, an observable value is a JavaScript object with a _current value_ and a set of _value listeners_ (colloquially called "observers"). The current value could be any piece of data, while its observers are plain old JavaScript functions that will be called with the current value whenever it changes.
 
@@ -77,7 +79,7 @@ const count = useRef(0)
 
 Now that you have an observable and know how to update its value, let's learn how to observe it.
 
-## Observers
+### Observers
 
 For an observable to be more useful than a plain old JavaScript variable, it needs to have at least one **observer**. The observer is a function that runs only when an observable it's observing has changed.
 
@@ -107,7 +109,7 @@ const observer = observe(() => {
 })
 ```
 
-## Eventual Consistency
+### Eventual Consistency
 
 AlienDOM runs observers in batches, which means that an observer won't run immediately when an observable changes. Instead, it will run "eventually", after the current microtask, which is a JavaScript concept that you can think of as the current batch of code. This is a common pattern in reactivity systems, and it has some important implications for how you write your code.
 
@@ -142,7 +144,7 @@ The good news is that AlienDOM's batching is designed in a way that avoids anoth
 **Why not run observers immediately?**  
 The main reason for this is performance. By batching updates, AlienDOM can avoid unnecessary re-renders and other performance bottlenecks. This is especially important in complex UIs with many observables and observers.
 
-## Observable Computation
+### Observable Computation
 
 In certain cases, you'll have observable values that inform the value of another observable. This is where `computed` comes in. A `computed` observable is a special kind of observable that is derived from other observables. When any of the other observables change, the `computed` observable will automatically update its value.
 
@@ -168,7 +170,7 @@ To avoid unnecessary computation, `computed` observables are only updated when t
 **Component usage**  
 For convenience, the `useComputed` hook exists to create a `computed` observable within a component. Optionally, you may provide a dependency array for re-running the computation forcefully, which can be useful when the computation depends on non-observable values.
 
-## Array Refs
+### Array Refs
 
 As you may have guessed, an array ref is an observable that holds an array. Moreover, it's a `Proxy` that forwards any `Array` method calls to the underlying array in an observable fashion. This means you can use any `Array` method on an array ref, and any access or mutation of the array can be observed.
 
@@ -233,7 +235,7 @@ An "array operation" is an object with a `type` property that can be any of the 
 - `replace`: A value at a specific index was replaced with another value
 - `rebase`: The array was replaced with a new array
 
-## Peeking at Refs
+### Peeking at Refs
 
 In some cases, you may want to access the current value of a ref without that access being observed. This is called "peeking" at the ref. To peek at a ref, call its `peek` method.
 
@@ -250,7 +252,7 @@ setTimeout(() => {
 }, 10)
 ```
 
-## Toggling a Ref
+### Toggling a Ref
 
 When working with a `Ref<boolean>`, you may want to toggle its value. To do this, call its `toggle` method. This sets the ref's value to the opposite of its current value.
 
@@ -259,7 +261,7 @@ const isDarkMode = ref(true)
 isDarkMode.toggle() // If isDarkMode is true, it will be set to false, and vice versa.
 ```
 
-## Mapping a Ref to Another Ref
+### Mapping a Ref to Another Ref
 
 When you have a ref and you want to map its value to another ref, you can use the `computedMap` method to create a computed ref based on the original ref. This is useful when you want to transform the value of a ref in a reactive way.
 
@@ -267,7 +269,7 @@ There's also the `computedIf` method, which also returns a computed ref. Its fir
 
 Lastly, there's the `computedElse` method, which also returns a computed ref. Its only argument is used to compute the value of the computed ref **only when the original ref's value is falsy.** It's the opposite of a single-argument `computedIf` call.
 
-# Event Channels
+## Event Channels
 
 In AlienDOM, to enable cross-component communication, we take advantage of first-class event channels. They are strongly typed and they can be broadcast globally or targeting an specific DOM node (or even an arbitrary JS object).
 
@@ -340,7 +342,7 @@ function Game({ onGameOver }: { onGameOver: Channel<{ score: number }> }) {
 }
 ```
 
-# Automatic Memoization
+## Automatic Memoization
 
 AlienDOM takes advantage of a "compile step" to optimize your JSX code. The AlienDOM compiler analyzes your code and modifies it before the browser runs it. Currently, the only optimization it performs is called "automatic memoization".
 
@@ -372,7 +374,7 @@ Uncaught ReferenceError: Cannot access 'foo' before initialization
 
 Essentially, the compiler's memoization takes advantage of dependency arrays. For a dependency array to work, its dependencies need to be initialized before itself. This is why you should always declare variables and functions before other variables and functions that depend on them.
 
-# JSX `class` attribute
+## JSX `class` attribute
 
 For intrinsic elements, the `class` attribute supports more than just a string of space-separated class names. It also accepts arrays and objects.
 
@@ -404,7 +406,7 @@ function MyComponent(props: { class: JSX.HTMLClassProp }) {
 return <MyComponent class={['width-100%', isRed && 'text-red-500']} />
 ```
 
-# JSX `style` attribute
+## JSX `style` attribute
 
 In AlienDOM, the `style` attribute supports both objects and arrays. Setting `style` to an array lets you pass in multiple style objects (or even another array). This is great for combining styles from multiple sources (i.e. a component's default styles and the styles passed in by the component's consumer).
 
