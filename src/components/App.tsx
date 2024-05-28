@@ -3,13 +3,14 @@ import { Icon } from '@/Icon'
 import { Todo, TodoStatus, createTodo, todoList } from '@/state'
 import { useEventState } from '@/useEventState'
 import {
-  AlienEvent,
   EffectContext,
   HTML,
   JSX,
   animate,
+  unmount,
   useComputed,
   useEffect,
+  useElementProxy,
   useRef,
   useRefs,
 } from 'alien-dom'
@@ -30,6 +31,7 @@ export function App() {
 }
 
 function TodoItem({ todo }: { todo: Todo }) {
+  const todoItemElement = useElementProxy<HTML.Div>()
   const todoCompletedRef = useComputed(
     () => todo.status == TodoStatus.Completed
   )
@@ -66,25 +68,21 @@ function TodoItem({ todo }: { todo: Todo }) {
             spring: { frequency: 0.22 },
           })
         }}
-        onBlur={(event) => {
+        onBlur={() => {
           if (todoCompletedRef.value) {
-            const todoItem =
-              event.currentTarget.closest<HTMLElement>('.todo-item')!
+            const clientHeight = todoItemElement.clientHeight
+            todoItemElement.style.willChange = 'height'
 
-            const clientHeight = todoItem.clientHeight
-            todoItem.style.willChange = 'height'
-
-            animate(todoItem, {
+            animate(todoItemElement, {
               to: { opacity: 0 },
               from: { opacity: 1 },
               spring: { frequency: 0.4 },
               onChange({ opacity }) {
-                todoItem.style.height = clientHeight * opacity + 'px'
+                todoItemElement.style.height = clientHeight * opacity + 'px'
               },
             })
           }
-        }}
-      >
+        }}>
         {circle}
         <Icon
           name="check"
@@ -101,7 +99,9 @@ function TodoItem({ todo }: { todo: Todo }) {
   }
 
   return (
-    <div class="todo-item mr-30 border-b-1 border-#3d3d3d overflow-hidden">
+    <div
+      ref={todoItemElement}
+      class="mr-30 border-b-1 border-#3d3d3d overflow-hidden">
       <div class="flex-row items-center py-8">
         <CompleteButton class="mr-6" />
         <span
@@ -183,16 +183,12 @@ function TodoCreator() {
     }
 
     function ConfirmDiscard() {
-      const modalId = 'confirm-discard'
+      const modalElement = useElementProxy<HTML.Div>()
       const discardBtnId = 'discard-btn'
 
-      const cancel = (event: AlienEvent) => {
-        event.currentTarget.closest('#' + modalId)!.remove()
-      }
-
-      const confirm = (event: AlienEvent) => {
+      const confirm = () => {
         discard()
-        cancel(event)
+        unmount(modalElement)
       }
 
       useEffect(({ rootElement }: EffectContext) => {
@@ -201,15 +197,15 @@ function TodoCreator() {
 
       return (
         <div
-          id={modalId}
+          ref={modalElement}
           class="fixed top-0 left-0 w-100vw h-100vh bg-black/50 items-center"
           onKeyDownCapture={(event) => {
             if (event.key === 'Enter') {
               event.stopPropagation()
-              confirm(event)
+              confirm()
             } else if (event.key === 'Escape') {
               event.stopPropagation()
-              cancel(event)
+              unmount(modalElement)
             }
           }}
         >
@@ -220,8 +216,7 @@ function TodoCreator() {
                 <div
                   role="button"
                   class="w-32 h-32 mr--8 items-center justify-center"
-                  onClick={cancel}
-                >
+                  onClick={() => unmount(modalElement)}>
                   <Icon name="close" class="w-24 h-24" />
                 </div>
               </div>
@@ -232,7 +227,9 @@ function TodoCreator() {
               </span>
             </div>
             <div class="flex-row justify-end gap-8 py-8">
-              <ActionButton onClick={cancel}>Cancel</ActionButton>
+              <ActionButton onClick={() => unmount(modalElement)}>
+                Cancel
+              </ActionButton>
               <ActionButton id={discardBtnId} color="red" onClick={confirm}>
                 Discard
               </ActionButton>
