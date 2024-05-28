@@ -21,7 +21,7 @@ export function App() {
     <div>
       <h1 class="text-26">My Todos</h1>
       <div>
-        {todoList.map((todo) => (
+        {todoList.map(todo => (
           <TodoItem key={todo.id} todo={todo} />
         ))}
       </div>
@@ -55,7 +55,7 @@ function TodoItem({ todo }: { todo: Todo }) {
         role="button"
         {...props}
         class={['w-24 h-24 cursor-pointer', props.class]}
-        onClick={(event) => {
+        onClick={event => {
           event.currentTarget.focus()
           todo.status =
             todo.status == TodoStatus.Completed
@@ -108,8 +108,7 @@ function TodoItem({ todo }: { todo: Todo }) {
           class={[
             'text-14 leading-1.5 py-1px',
             todoCompletedRef.computedIf('line-through color-#808080'),
-          ]}
-        >
+          ]}>
           {todo.text}
         </span>
       </div>
@@ -133,15 +132,13 @@ function TodoCreator() {
         class="flex-row h-33 items-center justify-start cursor-pointer"
         onClick={() => {
           setFormVisible(true)
-        }}
-      >
+        }}>
         <div class="w-24 h-24 items-center justify-center mr-6">
           <div
             class={[
               'w-17 h-17 rounded-full items-center justify-center',
               hovered ? 'color-white bg-#de4c4a' : 'color-#de4c4a',
-            ]}
-          >
+            ]}>
             <Icon name="add" class="w-12 h-12" />
           </div>
         </div>
@@ -149,8 +146,7 @@ function TodoCreator() {
           class={[
             'text-13 font-400',
             hovered ? 'color-#de4c4a' : 'color-#808080',
-          ]}
-        >
+          ]}>
           Add todo
         </span>
       </div>
@@ -199,7 +195,7 @@ function TodoCreator() {
         <div
           ref={modalElement}
           class="fixed top-0 left-0 w-100vw h-100vh bg-black/50 items-center"
-          onKeyDownCapture={(event) => {
+          onKeyDownCapture={event => {
             if (event.key === 'Enter') {
               event.stopPropagation()
               confirm()
@@ -207,8 +203,7 @@ function TodoCreator() {
               event.stopPropagation()
               unmount(modalElement)
             }
-          }}
-        >
+          }}>
           <div class="w-450 max-w-96vw bg-#1e1e1e rounded-14 px-16 py-8 mt-13vh">
             <div class="flex-row items-center mb-8">
               <h2 class="text-16 font-bold m-0">Discard changes?</h2>
@@ -249,10 +244,10 @@ function TodoCreator() {
           type="text"
           class="text-14 color-white font-600 placeholder:color-#808080 p-0.7"
           placeholder="Type your todo"
-          onInput={(event) => {
+          onInput={event => {
             todo.text = event.currentTarget.value
           }}
-          onKeyDown={(event) => {
+          onKeyDown={event => {
             if (event.key === 'Escape') {
               event.stopPropagation()
               cancel()
@@ -269,8 +264,7 @@ function TodoCreator() {
           <ActionButton
             color="red"
             onClick={submit}
-            class={todoTextEmpty.computedIf('opacity-50 pointer-events-none')}
-          >
+            class={todoTextEmpty.computedIf('opacity-50 pointer-events-none')}>
             Add todo
           </ActionButton>
         </div>
