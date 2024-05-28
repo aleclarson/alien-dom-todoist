@@ -180,15 +180,15 @@ function TodoCreator() {
 
     function ConfirmDiscard() {
       const modalElement = useElementProxy<HTML.Div>()
-      const discardBtnId = 'discard-btn'
+      const discardBtn = useElementProxy<HTML.Div>()
 
       const confirm = () => {
         discard()
         unmount(modalElement)
       }
 
-      useEffect(({ rootElement }: EffectContext) => {
-        rootElement.querySelector<HTML.Button>('#' + discardBtnId)!.focus()
+      useEffect(() => {
+        discardBtn.focus()
       }, [])
 
       return (
@@ -225,7 +225,7 @@ function TodoCreator() {
               <ActionButton onClick={() => unmount(modalElement)}>
                 Cancel
               </ActionButton>
-              <ActionButton id={discardBtnId} color="red" onClick={confirm}>
+              <ActionButton ref={discardBtn} color="red" onClick={confirm}>
                 Discard
               </ActionButton>
             </div>
